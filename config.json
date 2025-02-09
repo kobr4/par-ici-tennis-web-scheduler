@@ -1,0 +1,21 @@
+{
+    "locations": [
+      "Suzanne Lenglen"
+    ],
+    "priceType": [
+      "Tarif plein"
+    ],
+    "courtType": [
+      "Découvert"
+    ],
+    "players": [
+      {
+        "lastName": "Lastname1",
+        "firstName": "Firstname1"
+      },
+      {
+        "lastName": "Lastname2",
+        "firstName": "Firstname2"
+      }
+    ]
+  }

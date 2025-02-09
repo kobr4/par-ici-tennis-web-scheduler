@@ -1,0 +1,106 @@
+<html>
+    <header>
+        <title>Tennis Reservations</title> 
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js">
+        </script>
+    </header>
+    <body>
+        <form>
+            <label for="login">Login</label>
+            <input type="text" name="login" id="login" required />
+            <br>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required />
+            <br>
+            <label for="day_of_the_week">Day of the week</label>
+            <select id="day_of_the_week" name="day_of_the_week">
+                <option value="0">Monday</option>
+                <option value="1">Tuesday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Thursday</option>
+                <option value="4">Friday</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
+            </select>
+            <br>
+            <label id="hour_of_the_day">Hour of the day</label>
+            <select id="hour_of_the_day" name="hour_of_the_day">
+                <option value="8">8h</option>
+                <option value="9">9h</option>
+                <option value="10">10h</option>
+                <option value="11">11h</option>
+                <option value="12">12h</option>
+                <option value="13">13h</option>
+                <option value="14">14h</option>
+                <option value="15">15h</option>
+                <option value="16">16h</option>
+                <option value="17">17h</option>
+                <option value="18">18h</option>
+                <option value="19">19h</option>
+                <option value="20">20h</option>
+                <option value="21">21h</option>                
+            </select> 
+            <br>
+            <button type="button" onclick="createJob();">Setup schedule</button>       
+        </form>
+        <table id="reservationTable" border="1 | 0">
+        </table>
+        <script>
+            function fetchReservation() { 
+                $.ajax({
+                    url : 'http://localhost:8080/list_job',
+                    type : 'GET',
+                    success : function(data) {   
+                        $('#reservationTable').empty()
+                        $('#reservationTable').append("<tr><th>ID</th><th>Login</th><th>Cron</th><th></th></tr>")
+                        for (job of data)      
+                            $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td></tr>`);
+                    },
+                    error : function(request,error)
+                    {
+                        alert("Request: "+JSON.stringify(request));
+                    }
+                    });
+            }
+
+            function createJob() {
+                $.ajax({
+                    url : 'http://localhost:8080/setup_schedule',
+                    type : 'POST',               
+                    data: {
+                        "login": $('#login').val(),
+                        "password": $('#password').val(),
+                        "day_of_the_week": $('#day_of_the_week').val(),
+                        "hour_of_the_day": $('#hour_of_the_day').val()
+                    },
+                    success : function(data) {   
+                        fetchReservation();
+                    },
+                    error : function(request,error)
+                    {
+                        alert("Request: "+JSON.stringify(request));
+                    }
+                    });
+            }
+
+            function deleteReservation(id) {
+                $.ajax({
+                    url : 'http://localhost:8080/delete_job',
+                    type : 'POST',
+                    data: {"id": id},
+                    success : function(data) {      
+                        fetchReservation()
+                    },
+                    error : function(request,error)
+                    {
+                        alert("Request: "+JSON.stringify(request));
+                    }
+                    });
+            } 
+
+            $( document ).ready(function() {
+                fetchReservation()
+            })
+        </script>
+    </body>
+</html>
