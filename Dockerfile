@@ -1,4 +1,4 @@
-FROM node:18-slim
+FROM node:22-bullseye
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
