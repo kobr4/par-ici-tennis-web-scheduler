@@ -14,16 +14,16 @@
             <br>
             <label for="day_of_the_week">Day of the week</label>
             <select id="day_of_the_week" name="day_of_the_week">
-                <option value="0">Monday</option>
-                <option value="1">Tuesday</option>
-                <option value="2">Wednesday</option>
-                <option value="3">Thursday</option>
-                <option value="4">Friday</option>
-                <option value="5">Saturday</option>
-                <option value="6">Sunday</option>
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+                <option value="0">Sunday</option>
             </select>
             <br>
-            <label id="hour_of_the_day">Hour of the day</label>
+            <label for="hour_of_the_day">Hour of the day</label>
             <select id="hour_of_the_day" name="hour_of_the_day">
                 <option value="8">8h</option>
                 <option value="9">9h</option>
@@ -41,6 +41,16 @@
                 <option value="21">21h</option>                
             </select> 
             <br>
+            <label for="player1firstname">Player1 Firstname</label>
+            <input type="text" name="player1firstname" id="player1firstname" required />
+            <label for="player1surname">Player1 Surname</label>
+            <input type="text" name="player1surname" id="player1surname" required />
+            <br>
+            <label for="player2firstname">Player2 Firstname</label>
+            <input type="text" name="player2firstname" id="player2firstname" required />
+            <label for="player1surname">Player2 Surname</label>
+            <input type="text" name="player2surname" id="player2surname" required />
+            <br>
             <button type="button" onclick="createJob();">Setup schedule</button>       
         </form>
         <table id="reservationTable" border="1 | 0">
@@ -48,13 +58,16 @@
         <script>
             function fetchReservation() { 
                 $.ajax({
-                    url : 'http://par-ici-tennis.nicolasmy.com/list_job',
+                    url : `http://${window.location.host}/list_job`,
                     type : 'GET',
                     success : function(data) {   
                         $('#reservationTable').empty()
-                        $('#reservationTable').append("<tr><th>ID</th><th>Login</th><th>Cron</th><th></th></tr>")
-                        for (job of data)      
-                            $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td></tr>`);
+                        $('#reservationTable').append("<tr><th>ID</th><th>Login</th><th>Cron</th><th></th><th></th><th></th></tr>")
+                        
+                        for (job of data) {  
+                            const url = `http://${window.location.host}/last_execution_log?id=${job.id}`   
+                            $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td><button onclick="performDryRun('${job.id}')">Dry-Run</button></td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td><td><button onclick="window.open('${url}');">Last Execution Log</button></td></tr>`);
+                        }
                     },
                     error : function(request,error)
                     {
@@ -65,7 +78,7 @@
 
             function createJob() {
                 $.ajax({
-                    url : 'http://par-ici-tennis.nicolasmy.com/setup_schedule',
+                    url : `http://${window.location.host}/setup_schedule`,
                     type : 'POST',               
                     data: {
                         "login": $('#login').val(),
@@ -85,7 +98,7 @@
 
             function deleteReservation(id) {
                 $.ajax({
-                    url : 'http://par-ici-tennis.nicolasmy.com/delete_job',
+                    url : `http://${window.location.host}/delete_job`,
                     type : 'POST',
                     data: {"id": id},
                     success : function(data) {      
@@ -97,6 +110,21 @@
                     }
                     });
             } 
+
+            function performDryRun(id) {
+                $.ajax({
+                    url : `http://${window.location.host}/perform_dryrun`,
+                    type : 'POST',
+                    data: {"id": id},
+                    success : function(data) {      
+                        fetchReservation()
+                    },
+                    error : function(request,error)
+                    {
+                        alert("Request: "+JSON.stringify(request));
+                    }
+                    });                
+            }
 
             $( document ).ready(function() {
                 fetchReservation()

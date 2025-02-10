@@ -6,25 +6,33 @@ import { config } from './staticFiles.js'
 
 dayjs.extend(customParseFormat)
 
-const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
+function log(buffer, message) {
+  buffer.push(message);
+  console.log(message)
+};
+
+
+const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player1firstname, player1lastname, player2firstname, player2lastname) => {
   const DRY_RUN_MODE = dryMode
 
   const nextDayOfTheWeek = new Date()
+
+  var logBuffer = [];
   do {
     nextDayOfTheWeek.setDate(nextDayOfTheWeek.getDate() + 1) // Adding 1 day
-  } while (nextDayOfTheWeek.getDay() !== dayOfTheWeek)
+  } while (nextDayOfTheWeek.getDay() != dayOfTheWeek)
 
 
-    console.log(`Reservation pour ${nextDayOfTheWeek}`)
+    log([logBuffer],`Reservation pour ${nextDayOfTheWeek}`)
   if (DRY_RUN_MODE) {
-    console.log('----- DRY RUN START -----')
-    console.log('Script lancé en mode DRY RUN. Afin de tester votre configuration, une recherche va être lancé mais AUCUNE réservation ne sera réalisée')
+    log(logBuffer,'----- DRY RUN START -----')
+    log(logBuffer,'Script lancé en mode DRY RUN. Afin de tester votre configuration, une recherche va être lancé mais AUCUNE réservation ne sera réalisée')
   }
 
-  console.log(`${dayjs().format()} - Starting searching tennis`)
-  const browser = await chromium.launch({ headless: true, slowMo: 0, timeout: 80000 })
+  log(logBuffer,`${dayjs().format()} - Starting searching tennis`)
+  const browser = await chromium.launch({ headless: true, slowMo: 0, timeout: 8000 })
 
-  console.log(`${dayjs().format()} - Browser started`)
+  log(logBuffer,`${dayjs().format()} - Browser started`)
   const page = await browser.newPage()
   page.setDefaultTimeout(120000)
   await page.goto('https://tennis.paris.fr/tennis/jsp/site/Portal.jsp?page=tennis&view=start&full=1')
@@ -34,7 +42,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
   await page.fill('#password', password)
   await page.click('#form-login >> button')
 
-  console.log(`${dayjs().format()} - User connected`)
+  log(logBuffer,`${dayjs().format()} - User connected`)
 
   // wait for login redirection before continue
   await page.waitForSelector('.main-informations')
@@ -42,7 +50,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
   try {
     locationsLoop:
     for (const location of config.locations) {
-      console.log(`${dayjs().format()} - Search at ${location}`)
+      log(logBuffer,`${dayjs().format()} - Search at ${location}`)
       await page.goto('https://tennis.paris.fr/tennis/jsp/site/Portal.jsp?page=recherche&view=recherche_creneau#!')
 
       // select tennis location
@@ -54,8 +62,8 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
       await page.click('#when')
       const date = nextDayOfTheWeek ? dayjs(nextDayOfTheWeek) : dayjs().add(6, 'days')
       //const date = nextDayOfTheWeek
-      console.log(date.format())
-      console.log(`${date.format('DD/MM/YYYY')}`)
+      log(logBuffer,date.format())
+      log(logBuffer,`${date.format('DD/MM/YYYY')}`)
       await page.waitForSelector(`[dateiso="${date.format('DD/MM/YYYY')}"]`)
       await page.click(`[dateiso="${date.format('DD/MM/YYYY')}"]`)
       await page.waitForSelector('.date-picker', { state: 'hidden' })
@@ -92,7 +100,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
       }
 
       if (await page.title() !== 'Paris | TENNIS - Reservation') {
-        console.log(`${dayjs().format()} - Failed to find reservation for ${location}`)
+        log(logBuffer,`${dayjs().format()} - Failed to find reservation for ${location}`)
         continue
       }
 
@@ -126,7 +134,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
         await page.click('#submitControle')
       }
 
-
+      players = [{"firstName": player1firstname, "lastName": player1lastname},{"firstName": player2firstname, "lastName": player2lastname}]
       for (const [i, player] of config.players.entries()) {
         if (i > 0 && i < players.length) {
           await page.click('.addPlayer')
@@ -147,10 +155,10 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
       await paymentMode.fill('existingTicket')
 
       if (DRY_RUN_MODE) {
-        console.log(`${dayjs().format()} - Fausse réservation faite : ${location}`)
-        console.log(`pour le ${date.format('YYYY/MM/DD')} à ${selectedHour}h`)
-        console.log('----- DRY RUN END -----')
-        console.log('Pour réellement réserver un crénau, relancez le script sans le paramètre --dry-run')
+        log(logBuffer,`${dayjs().format()} - Fausse réservation faite : ${location}`)
+        log(logBuffer,`pour le ${date.format('YYYY/MM/DD')} à ${selectedHour}h`)
+        log(logBuffer,'----- DRY RUN END -----')
+        log(logBuffer,'Pour réellement réserver un crénau, relancez le script sans le paramètre --dry-run')
 
         await page.click('#previous')
         await page.click('#btnCancelBooking')
@@ -164,20 +172,22 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek) => {
 
       await page.waitForSelector('.confirmReservation')
 
-      console.log(`${dayjs().format()} - Réservation faite : ${await (
+      log(logBuffer,`${dayjs().format()} - Réservation faite : ${await (
         await (await page.$('.address')).textContent()
       ).trim().replace(/( ){2,}/g, ' ')}`)
-      console.log(`pour le ${await (
+      log(logBuffer,`pour le ${await (
         await (await page.$('.date')).textContent()
       ).trim().replace(/( ){2,}/g, ' ')}`)
       break
     }
   } catch (e) {
-    console.log(e)
+    log(logBuffer,e)
     await page.screenshot({ path: 'img/failure.png' })
   }
 
   await browser.close()
+  console.log("Exiting");
+  return logBuffer.join('\n');
 }
 
 const _bookTennis = bookTennis
