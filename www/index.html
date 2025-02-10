@@ -48,7 +48,7 @@
         <script>
             function fetchReservation() { 
                 $.ajax({
-                    url : 'http://par-ici-tennis.nicolasmy.com:8080/list_job',
+                    url : 'http://par-ici-tennis.nicolasmy.com/list_job',
                     type : 'GET',
                     success : function(data) {   
                         $('#reservationTable').empty()
@@ -65,7 +65,7 @@
 
             function createJob() {
                 $.ajax({
-                    url : 'http://par-ici-tennis.nicolasmy.com:8080/setup_schedule',
+                    url : 'http://par-ici-tennis.nicolasmy.com/setup_schedule',
                     type : 'POST',               
                     data: {
                         "login": $('#login').val(),
@@ -85,7 +85,7 @@
 
             function deleteReservation(id) {
                 $.ajax({
-                    url : 'http://par-ici-tennis.nicolasmy.com:8080/delete_job',
+                    url : 'http://par-ici-tennis.nicolasmy.com/delete_job',
                     type : 'POST',
                     data: {"id": id},
                     success : function(data) {      
