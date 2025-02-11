@@ -15,18 +15,24 @@ import { bookTennis as _bookTennis } from "./par-ici-tennis.js";
 
 var jobList = []
 
-// New app using express module
 const app = express();
 app.use(
     urlencoded({
         extended: true
-    })
+    }),
+    express.static('www')
 );
-
 app.get("/index.html",
     function (req, res) {
         res.sendFile(
             __dirname + "/www/index.html"
+        );
+    });
+
+app.get("/bootstap.min.css",
+    function (req, res) {
+        res.sendFile(
+            __dirname + "/www/bootstrap.min.css"
         );
     });
 
@@ -40,14 +46,10 @@ app.post("/setup_schedule",
         let player1lastname = req.body.player1lastname;
         let player2firstname = req.body.player2firstname;
         let player2lastname = req.body.player2lastname;  
-        //console.log(`login: ${login}`)
-        //console.log(`password: ${password}`)
-        //console.log(`day_of_the_week: ${day_of_the_week}`)
-        //console.log(`hour_of_the_day: ${hour_of_the_day}`)
 
         let day = (day_of_the_week+1)%6
         const scheduleHour = 8 + (new Date().getTimezoneOffset())/60;
-        const cron = `0 ${scheduleHour} * * *`
+        const cron = `2 ${scheduleHour} * * *`
         const jobSchedule =  {
             "id": uuidv4(),
             "job": null,

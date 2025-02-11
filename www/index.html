@@ -1,59 +1,88 @@
-<html>
+<!doctype html>
+
+<html lang="en">
     <header>
-        <title>Tennis Reservations</title> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Tennis Reservations Scheduler</title> 
         <script src="https://code.jquery.com/jquery-3.7.1.min.js">
         </script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     </header>
     <body>
+        <div class="p-3 d-flex justify-content-center align-items-center h-100 w-100">
         <form>
-            <label for="login">Login</label>
-            <input type="text" name="login" id="login" required />
-            <br>
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" required />
-            <br>
-            <label for="day_of_the_week">Day of the week</label>
-            <select id="day_of_the_week" name="day_of_the_week">
-                <option value="1">Monday</option>
-                <option value="2">Tuesday</option>
-                <option value="3">Wednesday</option>
-                <option value="4">Thursday</option>
-                <option value="5">Friday</option>
-                <option value="6">Saturday</option>
-                <option value="0">Sunday</option>
-            </select>
-            <br>
-            <label for="hour_of_the_day">Hour of the day</label>
-            <select id="hour_of_the_day" name="hour_of_the_day">
-                <option value="8">8h</option>
-                <option value="9">9h</option>
-                <option value="10">10h</option>
-                <option value="11">11h</option>
-                <option value="12">12h</option>
-                <option value="13">13h</option>
-                <option value="14">14h</option>
-                <option value="15">15h</option>
-                <option value="16">16h</option>
-                <option value="17">17h</option>
-                <option value="18">18h</option>
-                <option value="19">19h</option>
-                <option value="20">20h</option>
-                <option value="21">21h</option>                
-            </select> 
-            <br>
-            <label for="player1firstname">Player1 Firstname</label>
-            <input type="text" name="player1firstname" id="player1firstname" required />
-            <label for="player1surname">Player1 Surname</label>
-            <input type="text" name="player1surname" id="player1surname" required />
-            <br>
-            <label for="player2firstname">Player2 Firstname</label>
-            <input type="text" name="player2firstname" id="player2firstname" required />
-            <label for="player1surname">Player2 Surname</label>
-            <input type="text" name="player2surname" id="player2surname" required />
-            <br>
-            <button type="button" onclick="createJob();">Setup schedule</button>       
+            <div class="row mb-2">
+                <label for="login" class="col-sm-3 col-form-label">Login</label>
+                <div class="col-sm-9">
+                    <input type="text" name="login" id="login" required />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="password" class="col-sm-3 col-form-label">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" name="password" id="password" required />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="day_of_the_week" class="col-sm-3 col-form-label">Day of the week</label>
+                <div class="col-sm-9">
+                <select id="day_of_the_week" name="day_of_the_week">
+                    <option value="1">Monday</option>
+                    <option value="2">Tuesday</option>
+                    <option value="3">Wednesday</option>
+                    <option value="4">Thursday</option>
+                    <option value="5">Friday</option>
+                    <option value="6">Saturday</option>
+                    <option value="0">Sunday</option>
+                </select>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="hour_of_the_day" class="col-sm-3 col-form-label">Hour of the day</label>
+                <div class="col-sm-9">
+                    <select id="hour_of_the_day" name="hour_of_the_day">
+                        <option value="8">8h</option>
+                        <option value="9">9h</option>
+                        <option value="10">10h</option>
+                        <option value="11">11h</option>
+                        <option value="12">12h</option>
+                        <option value="13">13h</option>
+                        <option value="14">14h</option>
+                        <option value="15">15h</option>
+                        <option value="16">16h</option>
+                        <option value="17">17h</option>
+                        <option value="18">18h</option>
+                        <option value="19">19h</option>
+                        <option value="20">20h</option>
+                        <option value="21">21h</option>                
+                    </select> 
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="player1firstname" class="col-sm-3 col-form-label">Player1 Firstname</label>
+                <div class="col-sm-9">
+                    <input type="text" name="player1firstname" id="player1firstname" required />
+                </div>
+                <label for="player1surname" class="col-sm-3 col-form-label">Player1 Surname</label>
+                <div class="col-sm-9">
+                    <input type="text" name="player1surname" id="player1surname" required />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="player2firstname" class="col-sm-3 col-form-label">Player2 Firstname</label>
+                <div class="col-sm-9">
+                    <input type="text" name="player2firstname" id="player2firstname" required />
+                </div>
+                <label for="player1surname" class="col-sm-3 col-form-label">Player2 Surname</label>
+                <div class="col-sm-9">
+                    <input type="text" name="player2surname" id="player2surname" required />
+                </div>
+                </div>
+            
+            <button type="button" class="btn btn-primary" onclick="createJob();">Setup schedule</button>    
         </form>
-        <table id="reservationTable" border="1 | 0">
+        </div>
+        <table id="reservationTable" class="table table-bordered">
         </table>
         <script>
             function fetchReservation() { 
@@ -62,12 +91,13 @@
                     type : 'GET',
                     success : function(data) {   
                         $('#reservationTable').empty()
-                        $('#reservationTable').append("<tr><th>ID</th><th>Login</th><th>Cron</th><th></th><th></th><th></th></tr>")
-                        
+                        $('#reservationTable').append("<thead><tr><th>ID</th><th>Login</th><th>Cron</th><th></th><th></th><th></th></tr></thead>")
+                        $('#reservationTable').append("<tbody>")
                         for (job of data) {  
                             const url = `http://${window.location.host}/last_execution_log?id=${job.id}`   
                             $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td><button onclick="performDryRun('${job.id}')">Dry-Run</button></td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td><td><button onclick="window.open('${url}');">Last Execution Log</button></td></tr>`);
                         }
+                        $('#reservationTable').append("</tbody>")
                     },
                     error : function(request,error)
                     {
@@ -130,5 +160,6 @@
                 fetchReservation()
             })
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>
