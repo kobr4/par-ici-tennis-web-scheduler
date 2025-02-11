@@ -48,7 +48,7 @@ app.post("/setup_schedule",
         let player2lastname = req.body.player2lastname;  
 
         let day = (day_of_the_week+1)%6
-        const scheduleHour = 8 + (new Date().getTimezoneOffset())/60;
+        const scheduleHour = 7;
         const cron = `2 ${scheduleHour} * * *`
         const jobSchedule =  {
             "id": uuidv4(),
