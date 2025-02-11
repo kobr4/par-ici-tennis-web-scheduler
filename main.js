@@ -46,12 +46,14 @@ app.post("/setup_schedule",
         //console.log(`hour_of_the_day: ${hour_of_the_day}`)
 
         let day = (day_of_the_week+1)%6
+        const scheduleHour = 8 + (new Date().getTimezoneOffset())/60;
+        const cron = `0 ${scheduleHour} * * *`
         const jobSchedule =  {
             "id": uuidv4(),
             "job": null,
             "login": login,
             "password": password,
-            "cron": `0 8 * * ${day}`, 
+            "cron": cron, 
             "hour": hour_of_the_day, 
             "day_of_the_week": day_of_the_week, 
             "last_execution_log": "",
@@ -60,8 +62,9 @@ app.post("/setup_schedule",
             "player2firstname": player2firstname,
             "player2lastname": player2lastname
         }
-        let job = scheduleJob(`0 8 * * ${day}`, function(){
-            console.log('Initiating reservation for '+login);
+        
+        let job = scheduleJob(cron, function(){
+            console.log(`Initiating reservation for ${login}`);
             _bookTennis(false, login, password, hour_of_the_day, day_of_the_week, player1firstname, player1lastname, player2firstname, player2lastname).then(log => jobSchedule.last_execution_log = log)
           });
         
