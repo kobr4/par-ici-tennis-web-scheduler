@@ -135,7 +135,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
       }
 
       players = [{"firstName": player1firstname, "lastName": player1lastname},{"firstName": player2firstname, "lastName": player2lastname}]
-      for (const [i, player] of config.players.entries()) {
+      for (const [i, player] of players.entries()) {
         if (i > 0 && i < players.length) {
           await page.click('.addPlayer')
         }
