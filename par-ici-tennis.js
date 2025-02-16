@@ -12,7 +12,7 @@ function log(buffer, message) {
 };
 
 
-const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player1firstname, player1lastname, player2firstname, player2lastname) => {
+const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player1firstname, player1lastname, player2firstname, player2lastname, locationIn, court, pricetypeIn) => {
   const DRY_RUN_MODE = dryMode
 
   const nextDayOfTheWeek = new Date()
@@ -49,7 +49,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
 
   try {
     locationsLoop:
-    for (const location of config.locations) {
+    for (const location of [locationIn]) {
       log(logBuffer,`${dayjs().format()} - Search at ${location}`)
       await page.goto('https://tennis.paris.fr/tennis/jsp/site/Portal.jsp?page=recherche&view=recherche_creneau#!')
 
@@ -88,7 +88,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
             const [priceType, courtType] = await (
               await (await page.$(`.price-description:left-of(${bookSlotButton})`)).innerHTML()
             ).split('<br>')
-            if (!config.priceType.includes(priceType) || !config.courtType.includes(courtType)) {
+            if (![pricetypeIn].includes(priceType) || ![court].includes(courtType)) {
               continue
             }
             selectedHour = hour

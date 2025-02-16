@@ -46,10 +46,12 @@ app.post("/setup_schedule",
         let player1lastname = req.body.player1lastname;
         let player2firstname = req.body.player2firstname;
         let player2lastname = req.body.player2lastname;  
+        let location = req.body.location;
+        let court = req.body.court
+        let pricetype = req.body.pricetype;
 
-        let day = (day_of_the_week+1)%6
         const scheduleHour = 7;
-        const cron = `2 ${scheduleHour} * * *`
+        const cron = `0 ${scheduleHour} * * *`
         const jobSchedule =  {
             "id": uuidv4(),
             "job": null,
@@ -62,12 +64,15 @@ app.post("/setup_schedule",
             "player1firstname": player1firstname,
             "player1lastname": player1lastname,
             "player2firstname": player2firstname,
-            "player2lastname": player2lastname
+            "player2lastname": player2lastname,
+            "location": location,
+            "court": court,
+            "pricetype": pricetype
         }
         
         let job = scheduleJob(cron, function(){
             console.log(`Initiating reservation for ${login}`);
-            _bookTennis(false, login, password, hour_of_the_day, day_of_the_week, player1firstname, player1lastname, player2firstname, player2lastname).then(log => jobSchedule.last_execution_log = log)
+            _bookTennis(false, login, password, hour_of_the_day, day_of_the_week, player1firstname, player1lastname, player2firstname, player2lastname, location, court, pricetype).then(log => jobSchedule.last_execution_log = log)
           });
         
         jobSchedule.job = job;
@@ -87,9 +92,8 @@ app.post("/delete_job",
         function (req, res) {
             let id = req.body.id;     
             
-            jobList.filter(j => j.id == id).map(j => _bookTennis(true, j.login, j.password, j.hour, j.day_of_the_week, j.player1firstname, j.player1lastname, j.player2firstname, j.player2lastname)
+            jobList.filter(j => j.id == id).map(j => _bookTennis(true, j.login, j.password, j.hour, j.day_of_the_week, j.player1firstname, j.player1lastname, j.player2firstname, j.player2lastname, j.location, j.court, j.pricetype)
                 .then(log => {
-                    console.log("Back");
                     j.last_execution_log = log;
                 }))
             res.send(id)
@@ -97,7 +101,7 @@ app.post("/delete_job",
 
 app.get("/list_job",
     function (req, res) {
-        const list = jobList.map(job => ({"id": job.id, "login": job.login, "cron": job.cron}))
+        const list = jobList.map(job => ({"id": job.id, "login": job.login, "cron": job.cron, "day_of_the_week": job.day_of_the_week, "hour": job.hour, "location": job.location, "court": job.court, "pricetype": job.pricetype}))
         res.send(list)
     });    
     

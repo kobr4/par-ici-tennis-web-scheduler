@@ -10,7 +10,7 @@
     </header>
     <body>
         <div class="p-3 d-flex justify-content-center align-items-center h-100 w-100">
-        <form>
+        <form id="schedule_form">
             <div class="row mb-2">
                 <label for="login" class="col-sm-3 col-form-label">Login</label>
                 <div class="col-sm-9">
@@ -66,7 +66,7 @@
                 <label for="player1surname" class="col-sm-3 col-form-label">Player1 Surname</label>
                 <div class="col-sm-9">
                     <input type="text" name="player1surname" id="player1surname" required />
-                </div>
+            </div>
             </div>
             <div class="row mb-2">
                 <label for="player2firstname" class="col-sm-3 col-form-label">Player2 Firstname</label>
@@ -77,25 +77,73 @@
                 <div class="col-sm-9">
                     <input type="text" name="player2surname" id="player2surname" required />
                 </div>
+            </div>
+            <div class="row mb-2">
+                <label for="location" class="col-sm-3 col-form-label">Location</label>
+                <div class="col-sm-9">
+                <select id="location" name="location">
+                    <option value="Suzanne Lenglen">Suzanne Lenglen (Paris 15)</option>
+                    <option value="Elisabeth">Elisabeth (Paris 14)</option>
+                    <option value="Atlantique">Atlantique (Paris 15)</option>
+                    <option value="Rigoulot - La Plaine">Rigoulot - La Plaine (Paris 15)</option>
+                </select>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <input type="radio" id="Découvert" name="court" value="Découvert" checked />
+                    <label for="Découvert">Outdoor</label>
                 </div>
             
-            <button type="button" class="btn btn-primary" onclick="createJob();">Setup schedule</button>    
+                <div class="col-sm-6">
+                    <input type="radio" id="Couvert" name="court" value="Couvert" />
+                    <label for="Couvert">Indoor</label>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <input type="radio" id="Tarif Plein" name="pricetype" value="Tarif Plein" checked />
+                    <label for="Tarif Plein">Normal</label>
+                </div>
+            
+                <div class="col-sm-6">
+                    <input type="radio" id="Tarif Découvert" name="pricetype" value="Tarif Découvert" />
+                    <label for="Tarif Découvert">Reduced Fee</label>
+                </div>
+            </div>            
+            <button type="button" class="btn btn-primary" onclick="validateForm()?createJob(): alert('One or more fields are empty.');">Setup schedule</button>    
         </form>
         </div>
         <table id="reservationTable" class="table table-bordered">
         </table>
         <script>
+
+            function validateForm() {
+                var formValid = true;
+                $('#schedule_form input').each(function() {
+                    if ($(this).val() === '') {
+                        formValid = false;
+                    }
+                });
+                return formValid
+            }
+
+            function dayOfWeekAsString(dayIndex) {
+                return ["Sunday", "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex] || '';
+            }
+
             function fetchReservation() { 
                 $.ajax({
                     url : `http://${window.location.host}/list_job`,
                     type : 'GET',
                     success : function(data) {   
                         $('#reservationTable').empty()
-                        $('#reservationTable').append("<thead><tr><th>ID</th><th>Login</th><th>Cron</th><th></th><th></th><th></th></tr></thead>")
+                        $('#reservationTable').append("<thead><tr><th>ID</th><th>Login</th><th>Cron</th><th>Location</th><th>Day of the week</th><th>Hour</th><th></th><th></th><th></th></tr></thead>")
                         $('#reservationTable').append("<tbody>")
                         for (job of data) {  
                             const url = `http://${window.location.host}/last_execution_log?id=${job.id}`   
-                            $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td><button onclick="performDryRun('${job.id}')">Dry-Run</button></td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td><td><button onclick="window.open('${url}');">Last Execution Log</button></td></tr>`);
+                            $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td>${job.location}</td><td>${dayOfWeekAsString(job.day_of_the_week)}</td><td>${job.hour}</td><td><button onclick="performDryRun('${job.id}')">Dry-Run</button></td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td><td><button onclick="window.open('${url}');">Last Execution Log</button></td></tr>`);
                         }
                         $('#reservationTable').append("</tbody>")
                     },
@@ -114,7 +162,14 @@
                         "login": $('#login').val(),
                         "password": $('#password').val(),
                         "day_of_the_week": $('#day_of_the_week').val(),
-                        "hour_of_the_day": $('#hour_of_the_day').val()
+                        "hour_of_the_day": $('#hour_of_the_day').val(),
+                        "player1firstname": $('#player1firstname').val(),
+                        "player1surname": $('#player1surname').val(),
+                        "player2firstname": $('#player2firstname').val(),
+                        "player2surname": $('#player2surname').val(),
+                        "location": $('#location').val(),
+                        "court": $('#court').val(),
+                        "pricetype": $('#pricetype').val()
                     },
                     success : function(data) {   
                         fetchReservation();
