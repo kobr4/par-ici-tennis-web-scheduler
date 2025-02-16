@@ -135,7 +135,7 @@
 
             function fetchReservation() { 
                 $.ajax({
-                    url : `http://${window.location.host}/list_job`,
+                    url : `https://${window.location.host}/list_job`,
                     type : 'GET',
                     success : function(data) {   
                         $('#reservationTable').empty()
@@ -156,7 +156,7 @@
 
             function createJob() {
                 $.ajax({
-                    url : `http://${window.location.host}/setup_schedule`,
+                    url : `https://${window.location.host}/setup_schedule`,
                     type : 'POST',               
                     data: {
                         "login": $('#login').val(),
@@ -183,7 +183,7 @@
 
             function deleteReservation(id) {
                 $.ajax({
-                    url : `http://${window.location.host}/delete_job`,
+                    url : `https://${window.location.host}/delete_job`,
                     type : 'POST',
                     data: {"id": id},
                     success : function(data) {      
@@ -198,7 +198,7 @@
 
             function performDryRun(id) {
                 $.ajax({
-                    url : `http://${window.location.host}/perform_dryrun`,
+                    url : `https://${window.location.host}/perform_dryrun`,
                     type : 'POST',
                     data: {"id": id},
                     success : function(data) {      
