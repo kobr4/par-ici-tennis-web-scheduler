@@ -29,6 +29,10 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
   log(logBuffer,`locationIn: ${locationIn}`)
   log(logBuffer,`court: ${court}`)
   log(logBuffer,`pricetypeIn: ${pricetypeIn}`)
+  log(logBuffer,`player1firstname: ${player1firstname}`)
+  log(logBuffer,`player1lastname: ${player1lastname}`)
+  log(logBuffer,`player2firstname: ${player2firstname}`)
+  log(logBuffer,`player2lastname: ${player2lastname}`)
   if (DRY_RUN_MODE) {
     log(logBuffer,'----- DRY RUN START -----')
     log(logBuffer,'Script lancé en mode DRY RUN. Afin de tester votre configuration, une recherche va être lancé mais AUCUNE réservation ne sera réalisée')
