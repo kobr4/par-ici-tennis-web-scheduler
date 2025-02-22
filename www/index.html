@@ -3,7 +3,7 @@
 <html lang="en">
     <header>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Tennis Reservations Scheduler</title> 
+        <title>Paris Tennis Reservations Scheduler</title> 
         <script src="https://code.jquery.com/jquery-3.7.1.min.js">
         </script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -91,25 +91,25 @@
             </div>
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <input type="radio" id="Découvert" name="court" value="Découvert" checked />
+                    <input type="radio" id="Outdoor" name="court" value="Découvert" checked />
                     <label for="Découvert">Outdoor</label>
                 </div>
             
                 <div class="col-sm-6">
-                    <input type="radio" id="Couvert" name="court" value="Couvert" />
+                    <input type="radio" id="Indoor" name="court" value="Couvert" />
                     <label for="Couvert">Indoor</label>
                 </div>
             </div>
 
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <input type="radio" id="Tarif Plein" name="pricetype" value="Tarif Plein" checked />
-                    <label for="Tarif Plein">Normal</label>
+                    <input type="radio" id="Normal" name="pricetype" value="Tarif plein" checked />
+                    <label for="Tarif plein">Normal</label>
                 </div>
             
                 <div class="col-sm-6">
-                    <input type="radio" id="Tarif Découvert" name="pricetype" value="Tarif Découvert" />
-                    <label for="Tarif Découvert">Reduced Fee</label>
+                    <input type="radio" id="ReducedFee" name="pricetype" value="Tarif réduit" />
+                    <label for="Tarif réduit">Reduced Fee</label>
                 </div>
             </div>            
             <button type="button" class="btn btn-primary" onclick="validateForm()?createJob(): alert('One or more fields are empty.');">Setup schedule</button>    
@@ -135,14 +135,14 @@
 
             function fetchReservation() { 
                 $.ajax({
-                    url : `https://${window.location.host}/list_job`,
+                    url : `${window.location.protocol}//${window.location.host}/list_job`,
                     type : 'GET',
                     success : function(data) {   
                         $('#reservationTable').empty()
                         $('#reservationTable').append("<thead><tr><th>ID</th><th>Login</th><th>Cron</th><th>Location</th><th>Day of the week</th><th>Hour</th><th></th><th></th><th></th></tr></thead>")
                         $('#reservationTable').append("<tbody>")
                         for (job of data) {  
-                            const url = `http://${window.location.host}/last_execution_log?id=${job.id}`   
+                            const url = `${window.location.protocol}//${window.location.host}/last_execution_log?id=${job.id}`   
                             $('#reservationTable').append(`<tr><td>${job.id}</td><td>${job.login}</td><td>${job.cron}</td><td>${job.location}</td><td>${dayOfWeekAsString(job.day_of_the_week)}</td><td>${job.hour}</td><td><button onclick="performDryRun('${job.id}')">Dry-Run</button></td><td><button onclick="deleteReservation('${job.id}')">Delete</button></td><td><button onclick="window.open('${url}');">Last Execution Log</button></td></tr>`);
                         }
                         $('#reservationTable').append("</tbody>")
@@ -156,7 +156,7 @@
 
             function createJob() {
                 $.ajax({
-                    url : `https://${window.location.host}/setup_schedule`,
+                    url : `${window.location.protocol}//${window.location.host}/setup_schedule`,
                     type : 'POST',               
                     data: {
                         "login": $('#login').val(),
@@ -168,8 +168,8 @@
                         "player2firstname": $('#player2firstname').val(),
                         "player2surname": $('#player2surname').val(),
                         "location": $('#location').val(),
-                        "court": $('#court').val(),
-                        "pricetype": $('#pricetype').val()
+                        "court": $('input[name="court"]:checked').val(),
+                        "pricetype": $('input[name="pricetype"]:checked').val()
                     },
                     success : function(data) {   
                         fetchReservation();
@@ -183,7 +183,7 @@
 
             function deleteReservation(id) {
                 $.ajax({
-                    url : `https://${window.location.host}/delete_job`,
+                    url : `${window.location.protocol}//${window.location.host}/delete_job`,
                     type : 'POST',
                     data: {"id": id},
                     success : function(data) {      
@@ -198,7 +198,7 @@
 
             function performDryRun(id) {
                 $.ajax({
-                    url : `https://${window.location.host}/perform_dryrun`,
+                    url : `${window.location.protocol}//${window.location.host}/perform_dryrun`,
                     type : 'POST',
                     data: {"id": id},
                     success : function(data) {      

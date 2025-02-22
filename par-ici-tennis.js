@@ -23,7 +23,12 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
   } while (nextDayOfTheWeek.getDay() != dayOfTheWeek)
 
 
-    log([logBuffer],`Reservation pour ${nextDayOfTheWeek}`)
+  log(logBuffer,`Reservation pour ${nextDayOfTheWeek}`)
+  log(logBuffer,`hourIn: ${hourIn}`)
+  log(logBuffer,`dayOfTheWeek: ${dayOfTheWeek}`)
+  log(logBuffer,`locationIn: ${locationIn}`)
+  log(logBuffer,`court: ${court}`)
+  log(logBuffer,`pricetypeIn: ${pricetypeIn}`)
   if (DRY_RUN_MODE) {
     log(logBuffer,'----- DRY RUN START -----')
     log(logBuffer,'Script lancé en mode DRY RUN. Afin de tester votre configuration, une recherche va être lancé mais AUCUNE réservation ne sera réalisée')
@@ -134,7 +139,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
         await page.click('#submitControle')
       }
 
-      players = [{"firstName": player1firstname, "lastName": player1lastname},{"firstName": player2firstname, "lastName": player2lastname}]
+      let players = [{"firstName": player1firstname, "lastName": player1lastname},{"firstName": player2firstname, "lastName": player2lastname}]
       for (const [i, player] of players.entries()) {
         if (i > 0 && i < players.length) {
           await page.click('.addPlayer')
