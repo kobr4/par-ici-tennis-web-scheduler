@@ -111,6 +111,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
 
       if (await page.title() !== 'Paris | TENNIS - Reservation') {
         log(logBuffer,`${dayjs().format()} - Failed to find reservation for ${location}`)
+        await page.screenshot({ path: 'img/no_reservation.png' })
         continue
       }
 
