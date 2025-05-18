@@ -23,6 +23,9 @@ app.use(
     }),
     express.static('www')
 );
+
+app.use(express.static('img'))
+
 app.get("/index.html",
     function (req, res) {
         res.sendFile(
