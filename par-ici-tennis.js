@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 import { parseqAPI } from './lib/parseq.js'
 import { config } from './staticFiles.js'
+import { sendImageToGPT } from './chatgpt_resolve.js';
 
 dayjs.extend(customParseFormat)
 
@@ -133,6 +134,9 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
 	  await page.pdf({ path: 'page.pdf' });
           const captcha = await captchaIframe.locator('#li-antibot-questions-container img').screenshot({ path: 'img/captcha.png' })
           const resCaptcha = await parseqAPI(new Blob([captcha]))
+          log(logBuffer,`Captcha result: ${resCaptcha}`)
+          const resCaptchGPT = await sendImageToGPT('img/captcha.png')
+          log(logBuffer,`Captcha GPT result: ${resCaptchGPT}`)
           await captchaIframe.locator('#li-antibot-answer').type(resCaptcha)
           await captchaIframe.locator('#li-antibot-validate').click()
 
