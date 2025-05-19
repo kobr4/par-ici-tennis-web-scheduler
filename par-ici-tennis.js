@@ -8,8 +8,8 @@ import { sendImageToGPT } from './chatgpt_resolve.js';
 dayjs.extend(customParseFormat)
 
 function log(buffer, message) {
-  buffer.push(message);
-  console.log(message)
+  buffer.push(`${dayjs().format()} - ${message}`);
+  console.log(`${dayjs().format()} - ${message}`)
 };
 
 
@@ -39,10 +39,10 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
     log(logBuffer,'Script lancé en mode DRY RUN. Afin de tester votre configuration, une recherche va être lancé mais AUCUNE réservation ne sera réalisée')
   }
 
-  log(logBuffer,`${dayjs().format()} - Starting searching tennis`)
+  log(logBuffer,`Starting searching tennis`)
   const browser = await chromium.launch({ headless: true, slowMo: 0, timeout: 8000 })
 
-  log(logBuffer,`${dayjs().format()} - Browser started`)
+  log(logBuffer,`Browser started`)
   const page = await browser.newPage()
   page.setDefaultTimeout(120000)
   await page.goto('https://tennis.paris.fr/tennis/jsp/site/Portal.jsp?page=tennis&view=start&full=1')
@@ -52,7 +52,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
   await page.fill('#password', password)
   await page.click('#form-login >> button')
 
-  log(logBuffer,`${dayjs().format()} - User connected`)
+  log(logBuffer,`User connected`)
 
   // wait for login redirection before continue
   await page.waitForSelector('.main-informations')
@@ -60,7 +60,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
   try {
     locationsLoop:
     for (const location of [locationIn]) {
-      log(logBuffer,`${dayjs().format()} - Search at ${location}`)
+      log(logBuffer,`Search at ${location}`)
       await page.goto('https://tennis.paris.fr/tennis/jsp/site/Portal.jsp?page=recherche&view=recherche_creneau#!')
 
       // select tennis location
@@ -111,7 +111,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
       }
 
       if (await page.title() !== 'Paris | TENNIS - Reservation') {
-        log(logBuffer,`${dayjs().format()} - Failed to find reservation for ${location}`)
+        log(logBuffer,`Failed to find reservation for ${location}`)
         await page.screenshot({ path: 'img/no_reservation.png' })
         continue
       }
@@ -137,8 +137,8 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
           const captcha = await captchaIframe.locator('#li-antibot-questions-container img').screenshot({ path: 'img/captcha.png' })
           const resCaptcha = await parseqAPI(new Blob([captcha]))
           log(logBuffer,`Captcha result: ${resCaptcha}`)
-          const resCaptchGPT = await sendImageToGPT('img/captcha.png')
-          log(logBuffer,`Captcha GPT result: ${resCaptchGPT}`)
+          //const resCaptchGPT = await sendImageToGPT('img/captcha.png')
+          //log(logBuffer,`Captcha GPT result: ${resCaptchGPT}`)
           await captchaIframe.locator('#li-antibot-answer').type(resCaptcha)
           await captchaIframe.locator('#li-antibot-validate').click()
 
@@ -170,7 +170,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
       await paymentMode.fill('existingTicket')
 
       if (DRY_RUN_MODE) {
-        log(logBuffer,`${dayjs().format()} - Fausse réservation faite : ${location}`)
+        log(logBuffer,`Fausse réservation faite : ${location}`)
         log(logBuffer,`pour le ${date.format('YYYY/MM/DD')} à ${selectedHour}h`)
         log(logBuffer,'----- DRY RUN END -----')
         log(logBuffer,'Pour réellement réserver un crénau, relancez le script sans le paramètre --dry-run')
@@ -187,7 +187,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
 
       await page.waitForSelector('.confirmReservation')
 
-      log(logBuffer,`${dayjs().format()} - Réservation faite : ${await (
+      log(logBuffer,`Réservation faite : ${await (
         await (await page.$('.address')).textContent()
       ).trim().replace(/( ){2,}/g, ' ')}`)
       log(logBuffer,`pour le ${await (
@@ -201,7 +201,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
   }
 
   await browser.close()
-  console.log("Exiting");
+  log(logBuffer,"Exiting");
   return logBuffer.join('\n');
 }
 
