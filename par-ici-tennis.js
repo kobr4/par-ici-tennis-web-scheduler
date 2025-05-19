@@ -95,6 +95,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
           const slots = await page.$$(dateDeb)
           for (const slot of slots) {
             const bookSlotButton = `[courtid="${await slot.getAttribute('courtid')}"]${dateDeb}`
+            log(logBuffer,`bookSlotButton: ${bookSlotButton}`)
             const [priceType, courtType] = await (
               await (await page.$(`.price-description:left-of(${bookSlotButton})`)).innerHTML()
             ).split('<br>')
@@ -145,7 +146,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
           i++
         } while (await note.innerText() !== 'Vérifié avec succès')
 
-        await page.click('#submitControle')
+        //await page.click('#submitControle')
       }
 
       let players = [{"firstName": player1firstname, "lastName": player1lastname},{"firstName": player2firstname, "lastName": player2lastname}]
