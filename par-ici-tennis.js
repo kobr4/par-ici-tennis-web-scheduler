@@ -93,7 +93,12 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
           }
 
           const slots = await page.$$(dateDeb)
-          for (const slot of slots) {
+          const shuffledSlots = slots
+              .map(value => ({ value, sort: Math.random() }))
+              .sort((a, b) => a.sort - b.sort)
+              .map(({ value }) => value)
+            
+          for (const slot of shuffledSlots) {
             const bookSlotButton = `[courtid="${await slot.getAttribute('courtid')}"]${dateDeb}`
             log(logBuffer,`bookSlotButton: ${bookSlotButton}`)
             const [priceType, courtType] = await (
