@@ -54,10 +54,12 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
 
   log(logBuffer,`User connected`)
 
-  // wait for login redirection before continue
-  await page.waitForSelector('.main-informations')
 
   try {
+
+    // wait for login redirection before continue
+    await page.waitForSelector('.main-informations')
+
     locationsLoop:
     for (const location of [locationIn]) {
       log(logBuffer,`Search at ${location}`)
