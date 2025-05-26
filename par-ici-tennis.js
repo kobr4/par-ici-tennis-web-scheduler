@@ -129,7 +129,7 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
         let i = 0
         let note
         do {
-          if (i > 2) {
+          if (i > 4) {
             throw new Error('Can\'t resolve captcha, reservation cancelled')
           }
 
