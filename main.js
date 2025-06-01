@@ -87,7 +87,7 @@ app.post("/setup_schedule",
 app.post("/delete_job",
     function (req, res) {
         let id = req.body.id;     
-        
+        jobList.filter(j => j.id == id).map(j => j.cancel())
         jobList = jobList.filter(j => j.id != id)
         res.send(id)
     });    
