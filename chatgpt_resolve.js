@@ -17,12 +17,12 @@ async function sendImageToGPT(img_path) {
   const base64Image = readFileSync(imagePath, { encoding: 'base64' });
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4.1-mini",
+    model: "gpt-4.1",
     messages: [
       {
         role: "user",
         content: [
-          { type: "text", text: "What do you see in this image? Return only the text that can be seen." },
+          { type: "text", text: "What is the text in this image? Answer with only the text that can be seen." },
           {
             type: "image_url",
             image_url: {

@@ -142,11 +142,12 @@ const bookTennis = async (dryMode, login, password, hourIn, dayOfTheWeek, player
           const captchaIframe = await page.frameLocator('#li-antibot-iframe')
 	  await page.pdf({ path: 'page.pdf' });
           const captcha = await captchaIframe.locator('#li-antibot-questions-container img').screenshot({ path: 'img/captcha.png' })
-          const resCaptcha = await parseqAPI(new Blob([captcha]))
-          log(logBuffer,`Captcha result: ${resCaptcha}`)
-          //const resCaptchGPT = await sendImageToGPT('img/captcha.png')
-          //log(logBuffer,`Captcha GPT result: ${resCaptchGPT}`)
-          await captchaIframe.locator('#li-antibot-answer').type(resCaptcha)
+          
+          //const resCaptcha = await parseqAPI(new Blob([captcha]))
+          //log(logBuffer,`Captcha result: ${resCaptcha}`)
+          const resCaptchGPT = await sendImageToGPT('img/captcha.png')
+          log(logBuffer,`Captcha GPT result: ${resCaptchGPT}`)
+          await captchaIframe.locator('#li-antibot-answer').type(resCaptchGPT)
           await captchaIframe.locator('#li-antibot-validate').click()
 
           note = await captchaIframe.locator('#li-antibot-check-note')
