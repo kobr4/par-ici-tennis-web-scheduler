@@ -54,8 +54,8 @@ app.post("/setup_schedule",
         let court = req.body.court
         let pricetype = req.body.pricetype;
 
-        const scheduleHour = 7;
-        const cron = `0 ${scheduleHour} * * *`
+        const scheduleHour = 6;
+        const cron = `59 ${scheduleHour} * * *`
         const jobSchedule =  {
             "id": uuidv4(),
             "job": null,
